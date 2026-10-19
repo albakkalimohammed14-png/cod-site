@@ -1,0 +1,14 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>لوحة التحكم</title>
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:640px;margin:auto;padding:16px;background:#f6f8fa;color:#14213d}
+input,button{font:inherit;padding:12px;border-radius:10px;border:1px solid #dde4ee;width:100%}button{background:#14213d;color:#fff;border:0;margin-top:8px;font-weight:700}
+.c{background:#fff;border:1px solid #dde4ee;border-radius:12px;padding:12px;margin-top:10px;display:flex;gap:12px;align-items:center}.c img{width:64px;height:64px;object-fit:cover;border-radius:8px}
+.c a{color:#0b5fff;margin-inline-end:10px}small{color:#667}</style></head><body>
+<h1>المنتوجات</h1><input id="i" placeholder="لصق رابط أو ID ديال المنتوج من Dropi"><button id="b">استيراد وصنع الصفحة</button><div id="m"></div><div id="l"></div>
+<script>
+const $=id=>document.getElementById(id),e=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function load(){const r=await(await fetch('/api/products')).json();$('l').innerHTML=r.length?r.map(p=>`<div class="c"><img src="${e(p.images[0]||'')}" alt=""><div><b>${e(p.title)}</b><br><small>${p.price} €</small><br>
+<a href="/p/${e(p.slug)}?c=es" target="_blank">ES</a><a href="/p/${e(p.slug)}?c=pt" target="_blank">PT</a><a href="/p/${e(p.slug)}?c=it" target="_blank">IT</a></div></div>`).join(''):'<p>مازال ما كاين حتى منتوج. لصق رابط وبدا.</p>'}
+$('b').onclick=async()=>{$('m').textContent='...';const r=await fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input:$('i').value})});
+$('m').textContent=r.ok?'تصاوبات الصفحة':'وقع مشكل — شوف الـ API ديال Dropi فـ adapters.js';if(r.ok){$('i').value='';load()}};
+load();
+</script></body></html>
