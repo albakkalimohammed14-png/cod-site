@@ -91,9 +91,9 @@ http.createServer(async (req, res) => {
       if (pth === '/api/products') return send(res, 200, rd('products.json'));
       if (pth === '/api/orders') return send(res, 200, rd('orders.json'));
       if (pth === '/api/import' && req.method === 'POST') {
-        const { input } = await body(req);
+        const { input, price } = await body(req);
         if (!input) return send(res, 400, { error: 'input' });
-        const p = await fetchProduct(input);
+        const p = await fetchProduct(input); if (+price > 0) p.price = +price;
         p.slug = slugify(p.title) + '-' + slugify(String(p.id)).slice(0, 8);
         const all = rd('products.json').filter(x => x.slug !== p.slug); all.unshift(p); wr('products.json', all);
         return send(res, 200, p);
